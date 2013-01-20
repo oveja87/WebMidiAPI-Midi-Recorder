@@ -1,8 +1,8 @@
 # equalizer
-=========
+------------------------------------------
 
 This is a demo how to record midi input with a midi-keyboard in google chrome.
-It uses a [midi synth template](https://github.com/cwilso/SynthTemplate) as it's basic code.
+It uses the [SynthTemplate](https://github.com/cwilso/SynthTemplate) by cwilso as it's basic code.
 
 ## Synth Template
 
