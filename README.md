@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Synth Template
 
 This is a template for building synthesizers built on the [Web Audio API](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html).  It is intended to build polyphonic synthesizers (although it can be easily adapted - monophonic is actually a bit easier).
@@ -10,9 +9,3 @@ This incorporates the [PointerEvents polyfill](https://github.com/toolkitchen/Po
 Check it out, feel free to fork, submit pull requests, etc.
 
 -Chris
-=======
-equalizer
-=========
-
-a demo how to record midi input with a midi-keyboard in google chrome
->>>>>>> 6f0b041970778b2a7af87f7f90b9ef19c8e161a8
