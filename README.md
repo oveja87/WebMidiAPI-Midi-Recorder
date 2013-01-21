@@ -2,12 +2,13 @@
 ------------------------------------------
 
 This is a demo how to record and visualize midi input with a midi-keyboard in google chrome. 
+You find an online version of the equalizer [here](http://dl.dropbox.com/u/9917288/equalizer/index.html).
 
 ## Features
 
 * Connect your midi-keyboard or -piano to play it in the browser (Synth Template)
 * if you don't have any midi-device you can also use the keyboard of your laptop or the mouse pointer to play 
-	(Synth Template) [Keyboard Shortcuts](https://dl-web.dropbox.com/get/Public/keyboard.svg?w=AADDsjY9DRTSjxA8fQ5ZXHR5ZFq44bU6GDa8JXSgr0yDVQ)
+	(Synth Template) [Keyboard Shortcuts](http://dl.dropbox.com/u/9917288/equalizer/keyboard.svg)
 * the interface shows two octaves of a keyboard which highlightes the actual played notes (Synth Template)
 * there is a record funtion which displays each played note on a canvas 
 * the recorder includes a function to stop and continue recording
@@ -130,7 +131,7 @@ The following code uses the requestAnimationFrame polyfill by Erik Möller to re
 ### Receive played notes and time
 It is possible to receive notes from
 * midi-device (with the help of webMIDIAPI.js)
-* keyboard (with the help of an array of [keyboard shortcuts](https://dl-web.dropbox.com/get/Public/keyboard.svg?w=AADDsjY9DRTSjxA8fQ5ZXHR5ZFq44bU6GDa8JXSgr0yDVQ)
+* keyboard (with the help of an array of [keyboard shortcuts](http://dl.dropbox.com/u/9917288/equalizer/keyboard.svg)
 * mouse pointer (with the help of pointerevents.js)
 
 By clicking/pressing a key the method add_note() and by releasing the pointer/key the method remove_note() is called. This methods adds the played note to the note array and sets timestamps for the begin and the end of playing this note. The timestamps are realized through the timer worker. The Worker also provides the current played time which is displayed on the interface. 
