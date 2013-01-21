@@ -145,11 +145,12 @@ var currentOctave = 3;
 
 function keyDown( ev ) {
 	var note = keys[ev.keyCode];
-	if (note)
+	if (note){
 		noteOn( note + 12*(3-currentOctave), 0.75 );
-	console.log( "key down: " + ev.keyCode );
-	
-	add_note(note); // begins recording this note
+		//console.log( "key down: " + ev.keyCode );	
+		add_note(note); // begins recording this note
+	}
+		
 
 	var e = document.getElementById( "k" + note );
 	if (e)
@@ -159,11 +160,12 @@ function keyDown( ev ) {
 
 function keyUp( ev ) {
 	var note = keys[ev.keyCode];
-	if (note)
+	if (note){
 		noteOff( note + 12*(3-currentOctave) );
-	//console.log( "key up: " + ev.keyCode );
-	
-	remove_note(note);  // stops recording this note
+		//console.log( "key up: " + ev.keyCode );		
+		remove_note(note);  // stops recording this note
+	}
+		
 	
 	var e = document.getElementById( "k" + note );
 	if (e)
@@ -173,10 +175,12 @@ function keyUp( ev ) {
 
 function pointerDown( ev ) {
 	var note = parseInt( ev.target.id.substring( 1 ) );
-	if (note != NaN)
+	if (note != NaN){
 		noteOn( note + 12*(3-currentOctave), 0.75 );
-	//console.log( "mouse down: " + note );
-	add_note(note); // begins recording this note
+		//console.log( "mouse down: " + note );
+		add_note(note); // begins recording this note		
+	}
+		
 	
 	ev.target.classList.add("pressed");
 	return false;
@@ -184,10 +188,12 @@ function pointerDown( ev ) {
 
 function pointerUp( ev ) {
 	var note = parseInt( ev.target.id.substring( 1 ) );
-	if (note != NaN)
+	if (note != NaN){
 		noteOff( note + 12*(3-currentOctave) );
-	//console.log( "mouse up: " + note );
-	remove_note(note);  // stops recording this note
+		//console.log( "mouse up: " + note );
+		remove_note(note);  // stops recording this note
+	}
+		
 	
 	ev.target.classList.remove("pressed");
 	return false;
@@ -233,7 +239,7 @@ function initAudio() {
     volNode.connect( audioContext.destination );
 
     // Synthesize a reverb impulse response (could use XHR to download one).
-//	revNode.buffer = impulseResponse( 5.0, 2.0 );
+	//	revNode.buffer = impulseResponse( 5.0, 2.0 );
 
 	synthBox = document.getElementById("synthbox");
 

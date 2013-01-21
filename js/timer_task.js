@@ -91,10 +91,7 @@ self.addEventListener('message', function(e) {
 			continue_timer(data);
 			break;
 		case 'request':
-			self.postMessage({
-				'time' : millisec,
-				'note' : data.note
-			});
+			self.postMessage({'time' : millisec, 'note' : data.note});
 			break;
 		case 'stop':
 			stop = true;

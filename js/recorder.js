@@ -1,53 +1,4 @@
-var notes = new Array();
 var millisec;
-
-function add_note(note_number) {
-	if (draw && !is_played(note_number)) {
-		var note = new Note(note_number);
-		notes.push(note);
-
-		timer_worker.postMessage({
-			'cmd' : 'request',
-			'note' : notes.length - 1
-		});
-	}
-}
-
-function is_played(note_number) {
-
-	for (var i = 0; i < notes.length; i++) {
-		if (notes[i].note_number === note_number && notes[i].begin >= -1 && notes[i].end == -1) {
-			return true;
-		}
-	}
-	return false;
-}
-
-function remove_note(note_number) {
-	if (draw) {
-		var note_index = findNote(note_number);
-
-		if (note_index > -1) {
-			timer_worker.postMessage({
-				'cmd' : 'request',
-				'note' : note_index
-			});
-		}
-	}
-}
-
-function findNote(note_number) {
-	for (var i = 0; i < notes.length; i++) {
-		if (notes[i].note_number === note_number && notes[i].begin >= -1 && notes[i].end == -1) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-// stage
-
-init_stage(document.getElementById('canvas'), 800, 600, 2);
 
 //record
 var record = document.getElementById("record_btn");
@@ -60,6 +11,7 @@ var timer_worker;
 
 time.innerHTML = "00:00:00";
 
+//controll recorder
 record.onclick = function() {
 	// switch between Buttons
 	if (record.value == "finish recording") {
@@ -111,52 +63,35 @@ stop_play_record.onclick = function() {
 };
 
 function start_recording() {
-
 	notes = new Array();
-
 	timer_worker = new Worker('js/timer_task.js');
-
 	addtimerEventListener();
-
-	timer_worker.postMessage({
-		'cmd' : 'start'
-	});
-
+	timer_worker.postMessage({'cmd' : 'start'});
 	start_drawing(notes);
 }
 
 function continue_recording() {
-	addtimerEventListener()
-
-	timer_worker.postMessage({
-		'cmd' : 'continue'
-	});
-
+	timer_worker.postMessage({'cmd' : 'continue'});
 	start_drawing(notes);
 }
 
 function stop_recording() {
-	timer_worker.removeEventListener();
-	timer_worker.postMessage({
-		'cmd' : 'stop'
-	});
-
+	timer_worker.postMessage({'cmd' : 'stop'});
 	stop_drawing();
 }
 
 function finish_recording() {
 	// terminate Worker
 	timer_worker.removeEventListener();
-	timer_worker.postMessage({
-		'cmd' : 'close'
-	});
-
+	timer_worker.postMessage({'cmd' : 'close'});
 	stop_drawing();
 }
 
+//Listener
 function addtimerEventListener() {
 	timer_worker.addEventListener('message', function(e) {
 		if (e.data.note > -1) {
+			console.log("!!!!!"+e.data.note);
 			millisec = e.data.time;
 			var note_index = e.data.note;
 			if (notes[note_index].begin > -1) {
@@ -170,4 +105,46 @@ function addtimerEventListener() {
 			time.innerHTML = e.data.time;
 		}
 	}, false);
+}
+
+
+//receive played notes
+function add_note(note_number) {
+	if (draw && !is_played(note_number)) {
+		//console.log("draw");
+		var note = new Note(note_number);
+		notes.push(note);
+
+		timer_worker.postMessage({ 'cmd' : 'request', 'note' : notes.length - 1 });
+	}
+}
+
+function is_played(note_number) {
+
+	for (var i = 0; i < notes.length; i++) {
+		if (notes[i].note_number === note_number && notes[i].begin >= -1 && notes[i].end == -1) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function remove_note(note_number) {
+	if (draw) {
+		//console.log("stop draw");
+		var note_index = findNote(note_number);
+
+		if (note_index > -1) {
+			timer_worker.postMessage({ 'cmd' : 'request', 'note' : note_index });
+		}
+	}
+}
+
+function findNote(note_number) {
+	for (var i = 0; i < notes.length; i++) {
+		if (notes[i].note_number === note_number && notes[i].begin >= -1 && notes[i].end == -1) {
+			return i;
+		}
+	}
+	return -1;
 }

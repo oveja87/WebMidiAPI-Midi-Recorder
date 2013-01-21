@@ -2,9 +2,12 @@
 
 	var FPS = 30;
 	var lines = [];
+	var notes = [];
 	var context = null;
 	var stage = {};
-	var NO_LINES = 10;
+	var no_lines = 0;
+	var WIDTH = 800;
+	var HEIGHT = 600;
 	var speed;
 	var draw = false;
 	var play = false;
@@ -12,17 +15,16 @@
 	var time = 0;
 
 	// STAGE Object
-	function Stage(width, height) {
+	function Stage() {
 	    this.l = 0; // left
-	    this.r = width; // right
+	    this.r = WIDTH; // right
 	    this.t = 0; // top
-	    this.b = height; // bottom
+	    this.b = HEIGHT; // bottom
 	}
 
 	Stage.prototype = {
 
 		render: function() {
-			
 			this.clear();
 			 
 			// draw each line
@@ -61,7 +63,7 @@
 
 	// LINE Object
 	function Line(i) {
-	    this.y = parseInt(i*stage.b/NO_LINES);
+	    this.y = parseInt(i*stage.b/no_lines);
 	}
 
 	Line.prototype = {
@@ -198,27 +200,9 @@
 			context.fillStyle = this.color;
 			context.fillRect(this.x, this.y, this.w, this.h);
 		}
-	};
-
-	function init_stage(canvas, width, height, speed) {
-
-		var canvas = canvas;
-		stage = new Stage(width, height);
-
-		canvas.width = width;
-		canvas.height = height;
-		context = canvas.getContext("2d");
-		
-		this.speed = speed;
-
-		// create set of lines
-		for (var i = 0; i < NO_LINES; i++) {
-			lines.push(new Line(i));
-		}
-
-		stage.render();		
-	}
+	};	
 	
+	// functions to animate while recording
 	function start_drawing(){
 		stop_playing();
 		draw = true;
@@ -241,6 +225,9 @@
 	function stop_drawing() {
 		draw = false;
 	}
+	
+	
+	// functions to animate while playing
 	
 	function start_playing() {
 		if(notes.length >0 ){
@@ -291,14 +278,8 @@
 		}
 	}
 	
-	function stop_playing() {
-		play = false;
-		
-		//stop playing notes
-		for(i = 60; i <= 83; i++) {
-			noteOff( i + 12*(3-currentOctave) );	
-		}
-	}
+	
+	// functions to create sound while playing a record
 	
 	function play_notes() {
 		
@@ -318,3 +299,40 @@
 			}	
 		}		
 	}
+	
+	function stop_playing() {
+		play = false;
+		
+		//stop playing notes
+		for(i = 60; i <= 83; i++) {
+			noteOff( i + 12*(3-currentOctave) );	
+		}
+	}
+	
+	
+	// init stage
+
+	function init_stage(canvas, speed, no_lines) {
+
+		var canvas = canvas;
+
+		canvas.width = WIDTH;
+		canvas.height = HEIGHT;		
+		
+		stage = new Stage();
+		
+		context = canvas.getContext("2d");
+		
+		this.speed = speed;
+		this.no_lines = no_lines;
+
+		// create set of lines
+		for (var i = 0; i < no_lines; i++) {
+			lines.push(new Line(i));
+		}
+
+		stage.render();		
+	}
+	
+
+	init_stage(document.getElementById('canvas'), 2, 10);
