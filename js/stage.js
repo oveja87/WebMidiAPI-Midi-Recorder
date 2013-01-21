@@ -246,8 +246,8 @@
 	
 			function tick(timestamp) {
 				stage.render();
-				play_notes();
 				if(play == true){
+					play_notes();
 					onFrame(tick);
 				}
 			}
@@ -266,9 +266,9 @@
 		var onFrame = window.requestAnimationFrame;
 
 		function tick(timestamp) {
-			stage.render();			
-			play_notes();
+			stage.render();	
 			if(play == true){
+				play_notes();
 				onFrame(tick);	
 			}
 		}
@@ -302,9 +302,9 @@
 	
 	function stop_playing() {
 		play = false;
-		
 		//stop playing notes
 		for(i = 60; i <= 83; i++) {
+		console.log("remove " + i);
 			noteOff( i + 12*(3-currentOctave) );	
 		}
 	}
