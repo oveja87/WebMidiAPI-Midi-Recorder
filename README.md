@@ -2,12 +2,13 @@
 ------------------------------------------
 
 This is a demo how to record and visualize midi input with a midi-keyboard in google chrome. 
+You find an online version of the equalizer [here](http://dl.dropbox.com/u/9917288/equalizer/index.html).
 
 ## Features
 
 * Connect your midi-keyboard or -piano to play it in the browser (Synth Template)
 * if you don't have any midi-device you can also use the keyboard of your laptop or the mouse pointer to play 
-	(Synth Template) [Keyboard Shortcuts](https://dl-web.dropbox.com/get/Public/keyboard.svg?w=AADDsjY9DRTSjxA8fQ5ZXHR5ZFq44bU6GDa8JXSgr0yDVQ)
+	(Synth Template) [Keyboard Shortcuts](http://dl.dropbox.com/u/9917288/equalizer/keyboard.svg)
 * the interface shows two octaves of a keyboard which highlightes the actual played notes (Synth Template)
 * there is a record funtion which displays each played note on a canvas 
 * the recorder includes a function to stop and continue recording
@@ -48,19 +49,22 @@ The Web Worker allows to execute javascript parallel. I used it for the timer. S
 The Webworker is created as an object with a javascript-file-path as argument and started with the postMessage()-method. To communicate between the main script and the worker eventlistener has to be added.
 
 ### Example from [www.HTML5rocks.com](http://www.html5rocks.com/de/tutorials/workers/basics/)
+
 Main script:
-		var worker = new Worker('doWork.js');
 
-		worker.addEventListener('message', function(e) {
-		  console.log('Worker said: ', e.data);
-		}, false);
+	var worker = new Worker('doWork.js');
 
-		worker.postMessage('Hello World'); // Send data to our worker.
+	worker.addEventListener('message', function(e) {
+	  console.log('Worker said: ', e.data);
+	}, false);
+
+	worker.postMessage('Hello World'); // Send data to our worker.
 
 doWork.js:
-		self.addEventListener('message', function(e) {
-		  self.postMessage(e.data);
-		}, false);
+
+	self.addEventListener('message', function(e) {
+	  self.postMessage(e.data);
+	}, false);
 
 To use the Worker, the site has to be running on a server.
 
@@ -81,7 +85,7 @@ This incorporates the [PointerEvents polyfill](https://github.com/toolkitchen/Po
 ### Init Canvas
 To use the player, the init_stage function has to be called first. It inits the canvas and creates a new stage object. It also produces the lines which you can see on the canvas after loading the site. The lines help the user to better see the animation. As parameters there is the canvas-element, the speed of the animation and the number of lines shown on the canvas. The lines are saved as objects in the array 'lines'.
 
-		function init_stage(canvas, speed, no_lines) {
+	function init_stage(canvas, speed, no_lines) {
 
 		var canvas = canvas;
 
@@ -108,84 +112,84 @@ To use the player, the init_stage function has to be called first. It inits the 
 ### Canvas Animations
 The init_stage method and all the other methods which are needed to draw something on the canvas are in the stage.js. There ar functions to stop and start recording and playing and also function to play and stop playing the sounds.
 Like the lines, also the notes are saved as objects in an array called 'notes'.	The lines and notes have all the properties which are needen to save and animate the played notes. They also have the functions 'calc' and 'draw' each. Through those methods the render function of the stage object can do the animations within the stage.	
+
 The following code uses the requestAnimationFrame polyfill by Erik Möller to render the frames: 
 
-		var onFrame = window.requestAnimationFrame;
+	var onFrame = window.requestAnimationFrame;
 
-		function tick(timestamp) {
-			stage.render();
-			if(draw == true){
-				onFrame(tick);
-			}
-		}
-
+	function tick(timestamp) {
+		stage.render();
 		if(draw == true){
 			onFrame(tick);
 		}
+	}
+
+	if(draw == true){
+		onFrame(tick);
+	}
 		
 ### Receive played notes and time
 It is possible to receive notes from
 * midi-device (with the help of webMIDIAPI.js)
-* keyboard (with the help of an array of [keyboard shortcuts](https://dl-web.dropbox.com/get/Public/keyboard.svg?w=AADDsjY9DRTSjxA8fQ5ZXHR5ZFq44bU6GDa8JXSgr0yDVQ)
+* keyboard (with the help of an array of [keyboard shortcuts](http://dl.dropbox.com/u/9917288/equalizer/keyboard.svg)
 * mouse pointer (with the help of pointerevents.js)
 
 By clicking/pressing a key the method add_note() and by releasing the pointer/key the method remove_note() is called. This methods adds the played note to the note array and sets timestamps for the begin and the end of playing this note. The timestamps are realized through the timer worker. The Worker also provides the current played time which is displayed on the interface. 
 
 Post message an den timer worker:
 
-		timer_worker.postMessage({
-			'cmd' : 'request',
-			'note' : note_index
-		});
+	timer_worker.postMessage({
+		'cmd' : 'request',
+		'note' : note_index
+	});
 		
 Eventlistener with different cases of the timer worker in timer_task.js:
 
-		self.addEventListener('message', function(e) {
-			var data = e.data;
+	self.addEventListener('message', function(e) {
+		var data = e.data;
+		switch (data.cmd) {
+			case 'start':
+				stop = false;
+				start_timer(data);
+				break;
+			case 'continue':
+				stop = false;
+				continue_timer(data);
+				break;
+			case 'request':
+				self.postMessage({
+					'time' : millisec,
+					'note' : data.note
+				});
+				break;
+			case 'stop':
+				stop = true;
+				break;
+			case 'close':
+				self.close();
+				// Terminates the worker.
+				break;
+			default:
+				self.postMessage('Unknown command: ' + data.msg);
+		};
 
-			switch (data.cmd) {
-				case 'start':
-					stop = false;
-					start_timer(data);
-					break;
-				case 'continue':
-					stop = false;
-					continue_timer(data);
-					break;
-				case 'request':
-					self.postMessage({
-						'time' : millisec,
-						'note' : data.note
-					});
-					break;
-				case 'stop':
-					stop = true;
-					break;
-				case 'close':
-					self.close();
-					// Terminates the worker.
-					break;
-				default:
-					self.postMessage('Unknown command: ' + data.msg);
-			};
-
-		}, false);
+	}, false);
 
 Eventlistener of the timer worker in recorder.js:
 
-		timer_worker.addEventListener('message', function(e) {
-			if (e.data.note > -1) {
-				millisec = e.data.time;
-				var note_index = e.data.note;
-				if (notes[note_index].begin > -1) {
-					notes[note_index].end = millisec;
-				} else {
-					notes[note_index].begin = millisec;
-				}
+	timer_worker.addEventListener('message', function(e) {
+		if (e.data.note > -1) {
+			millisec = e.data.time;
+			var note_index = e.data.note;
+			if (notes[note_index].begin > -1) {
+				notes[note_index].end = millisec;
 			} else {
-				time.innerHTML = e.data.time;  //message with e.data.time is received every second
+				notes[note_index].begin = millisec;
 			}
-		}, false);
+		} else {
+			time.innerHTML = e.data.time;  //message with e.data.time is received every second
+		}
+	}, false);
 
 		
 ### Control recorder and player
@@ -205,11 +209,11 @@ Some of the buttons are hidden or change their values in the different states of
 ## Extensions
 There are a lot of possibilities how the equalizer could be extended. 
 
-Some examples for possible extensions are to 
+Some examples for possible extensions are 
 * including a synthesizer 
-* choice of different kinds of instruments like guitars or drumsets
-* possibility to edit a record
-* save the recorded files
+* the choice of different kinds of instruments like guitars or drumsets
+* the possibility to edit a record
+* to save the recorded files
 * ...
 
 
