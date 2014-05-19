@@ -1,4 +1,4 @@
-# Equalizer
+# WebMidiAPI Midi-Recorder
 ------------------------------------------
 
 This is a demo how to record and visualize midi input with a midi-keyboard in google chrome. 
